@@ -17,7 +17,7 @@ Quick Drop is a fast, offline peer-to-peer file sharing application for Windows 
 ## Features
 
 - **No Size Limits:** Transfer files or deep folder structures of any size.
-- **Fast Local Transfers:** Maximize your hardware's throughput. Easily hit ***150+ MB/s*** on standard Wi-Fi, with speeds scaling further on Gigabit Ethernet setups.
+- **Fast Local Transfers:** Maximize your hardware's throughput. Easily hit ***200+ MB/s*** on standard Wi-Fi, with speeds scaling further on Gigabit Ethernet setups.
 - **Zero Configuration:** Devices automatically discover each other on the local network. No accounts or pairing codes required.
 - **Cross-Platform:** Send between any combination of Windows and Android devices.
 - **Secure:** All transfers are end-to-end encrypted locally using XChaCha20-Poly1305 and X25519.
