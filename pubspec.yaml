@@ -1,0 +1,36 @@
+name: quick_drop
+description: A local peer-to-peer file and folder sharing app for Windows.
+version: 1.0.0
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  file_picker: ^8.0.0
+  path_provider: ^2.1.2
+  cryptography: ^2.7.0
+  path: ^1.9.0
+  archive: ^3.3.7
+  sodium_libs: ^2.2.1
+  sodium: ^2.3.1+1
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  msix: ^3.16.13
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+
+msix_config:
+  display_name: Quick Drop
+  publisher_display_name: karnyadavdev
+  identity_name: karnyadavdev.quickdrop
+  msix_version: 1.0.0.0
+  logo_path: assets/images/logo.png
