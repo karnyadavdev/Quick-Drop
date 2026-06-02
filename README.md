@@ -29,6 +29,8 @@ Quick Drop is a fast, offline peer-to-peer file sharing application for Windows 
 3. Open the app on devices connected to the same Wi-Fi (also supports devices connected over an Ethernet network, for example, office/college PCs).
 4. Start transferring!
    
+*(For a portable setup without installation, extract `quick-drop-windows-x64-portable.zip` and run the executable directly).*
+
 ## How It Works Under The Hood
 
 Quick Drop is built with Flutter and uses native network sockets for high-speed I/O.
@@ -37,7 +39,7 @@ Quick Drop is built with Flutter and uses native network sockets for high-speed 
 - **Handshake:** ECDH key exchange to establish trust.
 - **Key Derivation:** HKDF to generate the session secret.
 - **Verification:** Both screens display a 6-digit cryptographic PIN to prevent Man-In-The-Middle (MITM) attacks.
-- **Streaming:** Files are chunked into 64KB blocks, encrypted on the fly, and streamed directly to disk.
+- **Streaming:** Files are chunked into 1MB blocks, encrypted on the fly, and streamed directly to disk.
 
 ### Building from Source
 
