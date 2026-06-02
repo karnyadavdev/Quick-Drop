@@ -1,41 +1,56 @@
-### Activity & Feedback
+<div align="center">
+  <img src="assets/images/logo.png" width="128" alt="Quick Drop Logo">
+  <h1>Quick Drop</h1>
+  <p><b>The fastest, most secure, and simplest way to share files.</b></p>
+  
+  <p>
+    <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Android-blue?style=for-the-badge" alt="Platforms">
+  </p>
+</div>
 
-If you find this app useful, please consider **starring** the repository. 
-Found a bug or have feedback? Feel free to open an **[issue](https://github.com/karnyadavdev/Quick-Drop/issues)**!
+---
 
-# QuickDrop
+**Quick Drop** was built because every other file-sharing app is either too slow, forces you through cloud servers, has file size limits, or uses weak security. 
 
-QuickDrop is a local peer-to-peer file sharing application for Windows, built with Flutter, focusing on high-speed offline transfers using native network sockets and robust cryptographic verification.
+Quick Drop is a fast, offline peer-to-peer file sharing application for Windows and Android. It transfers files directly over your local network, bypassing the internet entirely.
 
-## Protocol
+## Features
 
-QuickDrop uses a custom protocol for local transfers:
-1. Discovery over UDP Broadcast.
-2. The sender initiates an ECDH handshake.
-3. Both devices derive a shared secret using HKDF.
-4. A 6-digit PIN is displayed on both screens for verification.
-5. Files are streamed in 64KB blocks, encrypted using XChaCha20-Poly1305, and written directly to disk.
+- **No Size Limits:** Transfer files or deep folder structures of any size.
+- **Fast Local Transfers:** Maximize your hardware's throughput. Easily hit ***150+ MB/s*** on standard Wi-Fi, with speeds scaling further on Gigabit Ethernet setups.
+- **Zero Configuration:** Devices automatically discover each other on the local network. No accounts or pairing codes required.
+- **Cross-Platform:** Send between any combination of Windows and Android devices.
+- **Secure:** All transfers are end-to-end encrypted locally using XChaCha20-Poly1305 and X25519.
 
-## Requirements
+## Installation
 
-* **OS:** Windows 10 or Windows 11
-* **Network:** Both devices must be connected to the same local network (Wi-Fi or Ethernet).
+1. Grab `QuickDrop.exe` from the [Releases](https://github.com/karnyadavdev/Quick-Drop/releases) tab.
+2. Run the installer.
+3. Open the app on devices connected to the same Wi-Fi (also supports devices connected over an Ethernet network, for example, office/college PCs).
+4. Start transferring!
+   
+## How It Works Under The Hood
 
-## Build Instructions
+Quick Drop is built with Flutter and uses native network sockets for high-speed I/O.
 
-**Prerequisites:** Flutter SDK (Windows Setup), Visual Studio Build Tools.
+- **Discovery:** UDP Broadcast to find local peers.
+- **Handshake:** ECDH key exchange to establish trust.
+- **Key Derivation:** HKDF to generate the session secret.
+- **Verification:** Both screens display a 6-digit cryptographic PIN to prevent Man-In-The-Middle (MITM) attacks.
+- **Streaming:** Files are chunked into 64KB blocks, encrypted on the fly, and streamed directly to disk.
+
+### Building from Source
+
+Requirements: Flutter SDK (Windows), Visual Studio Build Tools.
 
 ```bash
 flutter build windows
 ```
 
-### Development Testing
-
-To run multiple instances of QuickDrop on the same PC (e.g. for testing UI/UX), enable UDP Port sharing:
+To run multiple instances on the same PC for testing, enable UDP Port sharing:
 ```bash
 flutter run -d windows --dart-define=QUICKDROP_ALLOW_SAME_PC=true
 ```
 
 ## License
-
-[MIT License](LICENSE)
+MIT License
