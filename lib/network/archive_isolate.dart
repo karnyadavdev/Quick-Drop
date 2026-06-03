@@ -139,34 +139,9 @@ void extractTarArchiveIsolate(Map<String, String> args) {
   final archivePath = args['archivePath']!;
   final destPath = args['destPath']!;
 
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    try {
-      final scanResult = Process.runSync('tar', ['-tf', archivePath]);
-      if (scanResult.exitCode == 0) {
-        final paths = scanResult.stdout.toString().split('\n');
-        bool isSafe = true;
-        for (var path in paths) {
-          path = path.trim();
-          if (path.isEmpty) continue;
-
-          final normalized = p.normalize(path).replaceAll('\\', '/');
-          if (p.isAbsolute(normalized) ||
-              normalized.startsWith('../') ||
-              normalized == '..') {
-            isSafe = false;
-            break;
-          }
-        }
-
-        if (isSafe) {
-          final extractResult = Process.runSync(
-            'tar',
-            ['-xf', archivePath, '-C', destPath],
-          );
-          if (extractResult.exitCode == 0) return;
-        }
-      }
-    } catch (_) {}
+  if ((Platform.isWindows || Platform.isLinux || Platform.isMacOS) &&
+      _extractWithNativeTar(archivePath, destPath)) {
+    return;
   }
 
   final inputStream = InputFileStream(archivePath);
@@ -218,6 +193,110 @@ void extractTarArchiveIsolate(Map<String, String> args) {
     }
   } finally {
     inputStream.close();
+  }
+}
+
+bool _extractWithNativeTar(String archivePath, String destPath) {
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    try {
+      final scanPathsResult = Process.runSync('tar', ['-tf', archivePath]);
+      final scanTypesResult = Process.runSync('tar', ['-tvf', archivePath]);
+
+      if (scanPathsResult.exitCode == 0 && scanTypesResult.exitCode == 0) {
+        final paths = scanPathsResult.stdout
+            .toString()
+            .split('\n')
+            .where((s) => s.trim().isNotEmpty)
+            .toList();
+        final types = scanTypesResult.stdout
+            .toString()
+            .split('\n')
+            .where((s) => s.trim().isNotEmpty)
+            .toList();
+
+        if (paths.length == types.length) {
+          bool isSafe = true;
+          for (var i = 0; i < paths.length; i++) {
+            final path = paths[i].trim();
+            final typeLine = types[i].trimLeft();
+            if (typeLine.isEmpty) {
+              isSafe = false;
+              break;
+            }
+
+            final firstChar = typeLine[0];
+            // Only allow regular files ('-') or directories ('d')
+            if (firstChar != '-' && firstChar != 'd') {
+              isSafe = false;
+              break;
+            }
+
+            final normalized = p.normalize(path).replaceAll('\\', '/');
+            if (p.isAbsolute(normalized) ||
+                normalized.startsWith('../') ||
+                normalized == '..') {
+              isSafe = false;
+              break;
+            }
+          }
+
+          if (isSafe) {
+            final extractResult = Process.runSync(
+              'tar',
+              ['-xf', archivePath, '-C', destPath],
+            );
+            if (extractResult.exitCode == 0) return true;
+          }
+        }
+      }
+    } catch (_) {}
+  }
+  return false;
+}
+
+_TarListEntry? _parseTarListEntry(String line) {
+  if (line.isEmpty) return null;
+  final type = line.codeUnitAt(0);
+  final isFile = type == 0x2d; // -
+  final isDirectory = type == 0x64; // d
+  if (!isFile && !isDirectory) return null;
+
+  final match = RegExp(
+    r'^\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+(.+)$',
+  ).firstMatch(line);
+  if (match == null) return null;
+
+  final name = match.group(1)!.trim();
+  if (name.contains(' -> ')) return null;
+  return _TarListEntry(name, isFile: isFile);
+}
+
+class _TarListEntry {
+  final String name;
+  final bool isFile;
+
+  const _TarListEntry(this.name, {required this.isFile});
+}
+
+void _validateArchiveEntry(
+  String archiveName, {
+  required bool isFile,
+  required String canonicalDest,
+}) {
+  _validateArchivePathSegments(archiveName);
+  final normalizedName = p.normalize(archiveName);
+  if (p.isAbsolute(normalizedName)) {
+    throw FormatException('Refusing to extract absolute path: $archiveName');
+  }
+  if (isFile && (normalizedName.isEmpty || normalizedName == '.')) {
+    throw FormatException(
+        'Refusing to extract file without a safe name: $archiveName');
+  }
+
+  final targetPath = p.canonicalize(p.join(canonicalDest, normalizedName));
+  if (targetPath != canonicalDest && !p.isWithin(canonicalDest, targetPath)) {
+    throw FormatException(
+        'Refusing to extract path outside destination: $archiveName');
   }
 }
 
