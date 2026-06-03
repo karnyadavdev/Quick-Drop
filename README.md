@@ -4,10 +4,10 @@
   <p><b>The fastest, most secure, and simplest way to share files.</b></p>
   
   <p>
-    <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Android-blue?style=for-the-badge" alt="Platforms">
+    <a href="https://github.com/karnyadavdev/QuickDrop/releases"><img src="https://img.shields.io/github/v/release/karnyadavdev/QuickDrop?style=for-the-badge&color=8B5CF6" alt="Release"></a>
+    <a href="LICENSE"><img src="https://img.shields.io/github/license/karnyadavdev/QuickDrop?style=for-the-badge&color=FF4D8D" alt="License"></a>
   </p>
 </div>
-
 
 ---
 
@@ -54,9 +54,6 @@ To run multiple instances on the same PC for testing, enable UDP Port sharing:
 ```bash
 flutter run -d windows --dart-define=QUICKDROP_ALLOW_SAME_PC=true
 ```
-
-## License
-MIT License
 
 ## License
 MIT License

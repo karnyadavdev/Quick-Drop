@@ -21,16 +21,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
-  msix: ^3.16.13
 
 flutter:
   uses-material-design: true
   assets:
     - assets/images/
-
-msix_config:
-  display_name: Quick Drop
-  publisher_display_name: karnyadavdev
-  identity_name: karnyadavdev.quickdrop
-  msix_version: 1.0.0.0
-  logo_path: assets/images/logo.png
