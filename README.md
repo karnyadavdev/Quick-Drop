@@ -4,8 +4,8 @@
   <p><b>The fastest, most secure, and simplest way to share files.</b></p>
   
   <p>
-    <a href="https://github.com/karnyadavdev/QuickDrop/releases"><img src="https://img.shields.io/github/v/release/karnyadavdev/QuickDrop?style=for-the-badge&color=8B5CF6" alt="Release"></a>
-    <a href="LICENSE"><img src="https://img.shields.io/github/license/karnyadavdev/QuickDrop?style=for-the-badge&color=FF4D8D" alt="License"></a>
+    <img src="https://img.shields.io/badge/Platform-Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows">
+    <img src="https://img.shields.io/badge/Platform-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android">
   </p>
 </div>
 
