@@ -185,6 +185,50 @@ void main() {
       expect(await File(p.join(tempDir.path, 'outside.txt')).exists(), isFalse);
     });
 
+    test('rejects symlink entries before native extraction', () async {
+      final tempDir =
+          await Directory.systemTemp.createTemp('quick_drop_symlink_tar_');
+      addTearDown(() => tempDir.delete(recursive: true));
+
+      final sourceDir = Directory(p.join(tempDir.path, 'source'));
+      final outsideDir = Directory(p.join(tempDir.path, 'outside'));
+      await sourceDir.create(recursive: true);
+      await outsideDir.create(recursive: true);
+      final outsideFile = File(p.join(outsideDir.path, 'private.txt'));
+      await outsideFile.writeAsString('private');
+
+      final link = Link(p.join(sourceDir.path, 'linked-private.txt'));
+      try {
+        await link.create(outsideFile.path);
+      } on FileSystemException {
+        markTestSkipped('This system does not allow symlink creation.');
+        return;
+      }
+
+      final archivePath = p.join(tempDir.path, 'symlink.tar');
+      final tarResult = Process.runSync(
+        'tar',
+        ['-cf', archivePath, '-C', sourceDir.path, 'linked-private.txt'],
+      );
+      if (tarResult.exitCode != 0) {
+        markTestSkipped('Native tar is not available.');
+        return;
+      }
+
+      expect(
+        () => extractTarArchiveIsolate({
+          'archivePath': archivePath,
+          'destPath': p.join(tempDir.path, 'output'),
+        }),
+        throwsFormatException,
+      );
+      expect(
+        await Link(p.join(tempDir.path, 'output', 'linked-private.txt'))
+            .exists(),
+        isFalse,
+      );
+    });
+
     test('rejects archive entries with parent path segments', () async {
       final tempDir =
           await Directory.systemTemp.createTemp('quick_drop_parent_tar_');
